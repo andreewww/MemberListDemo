@@ -10,6 +10,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="UserListViewController" customModule="MemberListDemo" customModuleProvider="target">
             <connections>
+                <outlet property="loadingIndicator" destination="JIH-SZ-19N" id="raA-Ym-edO"/>
                 <outlet property="tableView" destination="y8Q-OW-Zqj" id="v9H-Uo-kVt"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -23,10 +24,15 @@
                     <rect key="frame" x="0.0" y="118" width="393" height="666"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                 </tableView>
+                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="JIH-SZ-19N">
+                    <rect key="frame" x="186.66666666666666" y="416" width="20" height="20"/>
+                </activityIndicatorView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
+                <constraint firstItem="JIH-SZ-19N" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="9dr-EE-s5C"/>
+                <constraint firstItem="JIH-SZ-19N" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="EfS-J1-C4N"/>
                 <constraint firstItem="y8Q-OW-Zqj" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="F8l-QY-nlM"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="y8Q-OW-Zqj" secondAttribute="trailing" id="SOQ-3a-ASa"/>
                 <constraint firstItem="y8Q-OW-Zqj" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="VyH-IS-CKZ"/>

@@ -10,13 +10,13 @@ import Combine
 
 class UserListViewController: UIViewController {
     @IBOutlet private weak var tableView: UITableView!
+    @IBOutlet private weak var loadingIndicator: UIActivityIndicatorView!
     
     private let cellIdentifier = "UserListTableViewCell"
     
     private var viewModel: UserListViewModel = UserListViewModel()
     private var cancellables = Set<AnyCancellable>()
-    
-    private let loadingIndicator = UIActivityIndicatorView(style: .large)
+
     private var refreshControl: UIRefreshControl?
     
     
@@ -90,7 +90,9 @@ private extension UserListViewController {
         viewModel.$error
             .receive(on: DispatchQueue.main)
             .sink { [weak self] error in
-                self?.show(error ?? APIError.unknown)
+                if let error = error {
+                    self?.show(error)
+                }
             }
             .store(in: &cancellables)
     }
