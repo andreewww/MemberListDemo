@@ -23,7 +23,7 @@ struct UserDetail: Codable {
     let htmlUrl: String?
     let id: Int
     let location: String?
-    let login: String?
+    let login: String
     let name: String?
     let nodeId: String?
     let organizationsUrl: String?

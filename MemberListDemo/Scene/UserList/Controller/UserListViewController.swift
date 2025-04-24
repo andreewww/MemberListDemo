@@ -6,42 +6,30 @@
 //
 
 import UIKit
+import Combine
 
 class UserListViewController: UIViewController {
     @IBOutlet private weak var tableView: UITableView!
     
     private let cellIdentifier = "UserListTableViewCell"
     
-    private var viewModel: UserListViewModelProtocol = UserListViewModel()
+    private var viewModel: UserListViewModel = UserListViewModel()
+    private var cancellables = Set<AnyCancellable>()
     
     private let loadingIndicator = UIActivityIndicatorView(style: .large)
+    private var refreshControl: UIRefreshControl?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel = UserListViewModel(output: self)
         setupNavigationBar()
         setupTableView()
+        bindViewModel()
         fetchData()
     }
     
     func setupNavigationBar() {
         title = "Github User List"
-//        let currentLocationButton = UIBarButtonItem(image: UIImage(named: "navigate"), style: .plain, target: self, action: #selector(currentLocationOnTap))
-//        let createGeofenceAreaButton = UIBarButtonItem(image: UIImage(named: "pencil"), style: .plain, target: self, action: #selector(createGeofenceAreaOnTap))
-//        navigationItem.leftBarButtonItem = currentLocationButton
-//        navigationItem.rightBarButtonItem = createGeofenceAreaButton
-    }
-
-    private func setupTableView() {
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(UINib(nibName: cellIdentifier, bundle: nil), forCellReuseIdentifier: cellIdentifier)
-    }
-    
-    private func fetchData() {
-        Task {
-            await viewModel.refresh()
-        }
     }
 }
 
@@ -54,7 +42,9 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? UserListTableViewCell else {
             return UITableViewCell()
         }
-        
+        if indexPath.row < viewModel.users.count {
+            cell.config(with: viewModel.users[indexPath.row])
+        }
         return cell
     }
     
@@ -64,42 +54,59 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
         let frameHeight   = scrollView.frame.height
         
         if offsetY > contentHeight - frameHeight * 2 {
-            Task { await viewModel.loadNextPage() }
+            viewModel.loadNextPage()
         }
     }
 }
 
-// MARK: - UserListViewModelOutput
-extension UserListViewController: UserListViewModelOutput {
-    func usersPager(didUpdate list: [UserDetail]) {
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
+private extension UserListViewController {
+    func setupTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UINib(nibName: cellIdentifier, bundle: nil), forCellReuseIdentifier: cellIdentifier)
+        refreshControl = UIRefreshControl()
+        refreshControl?.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        tableView.refreshControl = refreshControl
     }
     
-    func usersPager(didChangeLoading isLoading: Bool) {
-        DispatchQueue.main.async {
-            if isLoading {
-                self.loadingIndicator.startAnimating()
-            } else {
-                self.loadingIndicator.stopAnimating()
+    private func fetchData() {
+        viewModel.refresh()
+    }
+    
+    func bindViewModel() {
+        viewModel.$users
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.tableView.reloadData() }
+            .store(in: &cancellables)
+        
+        viewModel.$isLoading
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] loading in
+                loading ? self?.loadingIndicator.startAnimating()
+                : self?.loadingIndicator.stopAnimating()
             }
-        }
+            .store(in: &cancellables)
+        
+        viewModel.$error
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] error in
+                self?.show(error ?? APIError.unknown)
+            }
+            .store(in: &cancellables)
     }
     
-    func usersPager(didReachEnd reached: Bool) {
-        if reached {
-            print("Reached the end of the list.")
-        }
-    }
-    
-    func usersPager(didFail error: APIError) {
-        showAlertView(title: "Error",
-                      message: error.localizedDescription,
-                      okActionTitle: "OK") { action in
-            
-        }
+    @objc func handleRefresh() {
+        viewModel.refresh()
+        refreshControl?.endRefreshing()
     }
     
     
+    // MARK: - Error Alert
+    func show(_ error: APIError) {
+        let alert = UIAlertController(title: "Error",
+                                      message: error.localizedDescription,
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
 }

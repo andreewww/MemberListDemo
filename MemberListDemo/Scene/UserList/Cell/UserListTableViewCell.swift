@@ -15,14 +15,14 @@ class UserListTableViewCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
     
-    func config() {
-        
+    func config(with user: UserDetail) {
+        nameLabel.text = user.name
     }
 }

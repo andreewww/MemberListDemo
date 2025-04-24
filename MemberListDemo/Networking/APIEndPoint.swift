@@ -14,6 +14,7 @@ protocol APIEndpoint {
     var queryItems: [URLQueryItem]? { get }
     var method: String { get }
     var headers: [String: String]? { get }
+    var body: Data? { get }
 }
 
 extension APIEndpoint {
@@ -21,6 +22,7 @@ extension APIEndpoint {
     var host: String { "api.github.com" }
     var method: String { "GET" }
     var headers: [String: String]? { ["Content-Type": "application/json; charset=utf-8"] }
+    var body: Data? { nil }
     
     var url: URL? {
         var component = URLComponents()

@@ -10,20 +10,20 @@ enum APIError: Error {
     case invalidResponse(status: Int)
     case decoding(Error)
     case network(Error)
-    case underlying(Error)
+    case unknown
     
     var localizedDescription: String {
         switch self {
         case .invalidURL:
             return "Invalid URL"
         case .invalidResponse(let status):
-            return "Invalid response with status code:\(status)."
+            return "Invalid response with status code: \(status)."
         case .decoding(let err):
             return "Parse JSON error: \(err.localizedDescription)"
         case .network(let err):
             return "Network error: \(err.localizedDescription)"
-        case .underlying(let error):
-            return "Underlying error: \(error.localizedDescription)"
+        case .unknown:
+            return "Unknown error"
         }
     }
 }

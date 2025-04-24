@@ -6,82 +6,61 @@
 //
 
 import Foundation
+import Combine
 
-protocol UserListViewModelOutput: AnyObject {
-    func usersPager(didUpdate list: [UserDetail])
-    func usersPager(didChangeLoading isLoading: Bool)
-    func usersPager(didReachEnd reached: Bool)
-    func usersPager(didFail error: APIError)
-}
-
-@MainActor
-protocol UserListViewModelProtocol: AnyObject {
-    var users: [UserDetail] { get }
-    var isLoading: Bool { get }
-    var reachedEnd: Bool { get }
-    var lastError: APIError? { get }
+final class UserListViewModel: ObservableObject {
+    @Published private(set) var users: [UserDetail] = []
+    @Published private(set) var isLoading = false
+    @Published var error: APIError?
     
-    func refresh() async
-    func loadNextPage() async
-}
-
-@MainActor
-final class UserListViewModel: UserListViewModelProtocol {
-    // MARK: - Storage
-    var users: [UserDetail] = []
-    private var sinceCursor = 0
-    private let perPage: Int
-    private let service: NetworkService
+    private let service = NetworkService.shared
+    private var cancellables = Set<AnyCancellable>()
     
-    // MARK: - Output targetUserListViewModelOutput
-    weak var output: UserListViewModelOutput?
+    private var since = 0
+    private let per = 20
+    private var reachedEnd = false
     
-    // MARK: - Init
-    init(perPage: Int = 20,
-         service: NetworkService = .shared,
-         output: UserListViewModelOutput? = nil) {
-        self.perPage  = perPage
-        self.service  = service
-        self.output   = output
-    }
-    
-    // MARK: - State flags
-    var isLoading = false {
-        didSet { output?.usersPager(didChangeLoading: isLoading) }
-    }
-    var reachedEnd = false {
-        didSet { output?.usersPager(didReachEnd: reachedEnd) }
-    }
-    var lastError: APIError?
-    
-    // MARK: - Actions (protocol)
-    
-    func refresh() async {
-        sinceCursor = 0
-        reachedEnd  = false
+    func refresh() {
+        since = 0
+        reachedEnd = false
         users.removeAll()
-        output?.usersPager(didUpdate: users)
-        await loadNextPage()
+        loadNextPage()
     }
     
-    func loadNextPage() async {
+    func loadNextPage() {
         guard !isLoading, !reachedEnd else { return }
         isLoading = true
-        defer { isLoading = false }
         
-        do {
-            let page: [UserDetail] = try await service.request(
-                Endpoint.usersList(perPage: perPage, since: sinceCursor)
-            )
-            self.users.append(contentsOf: page)
-            self.output?.usersPager(didUpdate: self.users)
+        service.request(Endpoint.usersList(perPage: per, since: since),
+                        as: [UserDetail].self)
+        .flatMap { [weak self] page -> AnyPublisher<[UserDetail], APIError> in
+            guard let self = self else {
+                return Empty(completeImmediately: true).eraseToAnyPublisher()
+            }
             
-            sinceCursor = page.last?.id ?? sinceCursor
-            reachedEnd  = page.count < perPage
-        } catch let apiErr as APIError {
-            output?.usersPager(didFail: apiErr)
-        } catch {
-            output?.usersPager(didFail: .underlying(error))
+            let detailPublishers = page.map { user in
+                self.service.request(Endpoint.userDetail(login: user.login), as: UserDetail.self)
+            }
+            
+            return Publishers.MergeMany(detailPublishers)
+                .collect()
+                .map { detailedUsers in
+                    detailedUsers.sorted { $0.id < $1.id }
+                }
+                .eraseToAnyPublisher()
         }
+        .sink { [weak self] completion in
+            guard let self = self else { return }
+            self.isLoading = false
+            if case .failure(let err) = completion {
+                self.error = err
+            }
+        } receiveValue: { [weak self] detailedUsers in
+            guard let self = self else { return }
+            self.users.append(contentsOf: detailedUsers)
+            self.since = detailedUsers.last?.id ?? self.since
+            self.reachedEnd = detailedUsers.count < self.per
+        }
+        .store(in: &cancellables)
     }
 }
