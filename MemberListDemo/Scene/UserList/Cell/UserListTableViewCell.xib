@@ -25,6 +25,7 @@
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="CUL-2u-aro">
                                         <rect key="frame" x="4" y="4" width="90" height="81"/>
+                                        <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="90" id="4PV-A6-FjK"/>
                                             <constraint firstAttribute="height" priority="999" constant="90" id="qQt-Np-glf"/>
@@ -65,10 +66,9 @@
                                             <constraint firstAttribute="height" constant="1" id="3xH-vJ-K2g"/>
                                         </constraints>
                                     </view>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VH8-zD-sHF">
-                                        <rect key="frame" x="0.0" y="37.333333333333343" width="200" height="51.666666666666657"/>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" text="Test" translatesAutoresizingMaskIntoConstraints="NO" id="VH8-zD-sHF">
+                                        <rect key="frame" x="0.0" y="37.333333333333336" width="37.333333333333336" height="33.000000000000007"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                        <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                         <color key="textColor" systemColor="labelColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences" textContentType="url"/>
@@ -78,11 +78,11 @@
                                 <constraints>
                                     <constraint firstItem="JoG-Ly-0WO" firstAttribute="top" secondItem="M7W-U7-XXU" secondAttribute="top" id="5pR-Jx-X2p"/>
                                     <constraint firstItem="JSe-bH-XY2" firstAttribute="leading" secondItem="M7W-U7-XXU" secondAttribute="leading" id="61y-R1-YTN"/>
-                                    <constraint firstAttribute="bottom" secondItem="VH8-zD-sHF" secondAttribute="bottom" id="LUx-l3-1Wm"/>
+                                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="VH8-zD-sHF" secondAttribute="bottom" id="LUx-l3-1Wm"/>
                                     <constraint firstItem="VH8-zD-sHF" firstAttribute="leading" secondItem="M7W-U7-XXU" secondAttribute="leading" id="Mrm-lN-BBd"/>
                                     <constraint firstItem="JSe-bH-XY2" firstAttribute="top" secondItem="JoG-Ly-0WO" secondAttribute="bottom" constant="8" id="Tn7-jK-ga0"/>
                                     <constraint firstAttribute="trailing" secondItem="JSe-bH-XY2" secondAttribute="trailing" id="W6h-6S-Wct"/>
-                                    <constraint firstAttribute="trailing" secondItem="VH8-zD-sHF" secondAttribute="trailing" id="ZmP-ah-dPg"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="VH8-zD-sHF" secondAttribute="trailing" id="ZmP-ah-dPg"/>
                                     <constraint firstAttribute="trailing" secondItem="JoG-Ly-0WO" secondAttribute="trailing" id="a5B-tl-Ofw"/>
                                     <constraint firstItem="JoG-Ly-0WO" firstAttribute="leading" secondItem="M7W-U7-XXU" secondAttribute="leading" id="an5-IX-54i"/>
                                     <constraint firstItem="VH8-zD-sHF" firstAttribute="top" secondItem="JSe-bH-XY2" secondAttribute="bottom" constant="8" id="rQi-HM-EVc"/>
@@ -112,13 +112,13 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondarySystemFillColor">
-            <color red="0.47058823529411764" green="0.47058823529411764" blue="0.50196078431372548" alpha="0.16" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.47058823529999999" green="0.47058823529999999" blue="0.50196078430000002" alpha="0.16" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray6Color">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

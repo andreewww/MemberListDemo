@@ -57,6 +57,13 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
             viewModel.loadNextPage()
         }
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard indexPath.row < viewModel.users.count else { return }
+        let userDetailViewModel = UserDetailViewModel(user: viewModel.users[indexPath.row])
+        let userDetailVC = UserDetailViewController(viewModel: userDetailViewModel)
+        navigationController?.pushViewController(userDetailVC, animated: true)
+    }
 }
 
 private extension UserListViewController {

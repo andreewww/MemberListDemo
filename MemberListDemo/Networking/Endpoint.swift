@@ -31,7 +31,7 @@ extension Endpoint: APIEndpoint {
         case .usersList(let per, let since):
             return [
                 .init(name: "per_page", value: String(per)),
-                .init(name: "since",    value: String(since))
+                .init(name: "since", value: String(since))
             ]
         case .userDetail:
             return nil

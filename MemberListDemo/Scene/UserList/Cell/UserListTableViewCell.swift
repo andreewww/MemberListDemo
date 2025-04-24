@@ -11,7 +11,7 @@ import SDWebImage
 class UserListTableViewCell: UITableViewCell {
     @IBOutlet private weak var avatarImageView: UIImageView!
     @IBOutlet private weak var nameLabel: UILabel!
-    @IBOutlet weak var profileLinkTextView: UITextView!
+    @IBOutlet private weak var profileLinkTextView: UITextView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
